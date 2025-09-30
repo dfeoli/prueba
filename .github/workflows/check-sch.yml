@@ -7,14 +7,14 @@ jobs:
   validar_push:
     runs-on: ubuntu-latest
     steps:
-      - name: Configurar Git
-        run: |
-          git fetch --prune --unshallow || true
+      - name: Checkout completo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Trae todo el historial de commits, no solo el último
 
       - name: Obtener lista de commits del push
         id: commits
         run: |
-          # Obtener el rango de commits entre el push y el remoto
           if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
             # Primer push del repo
             echo "commits=$(git rev-list HEAD)" >> $GITHUB_OUTPUT
@@ -25,15 +25,19 @@ jobs:
       - name: Obtener lista de archivos modificados
         id: files
         run: |
-          FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          if git rev-parse ${{ github.event.before }} >/dev/null 2>&1; then
+            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          else
+            FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+          fi
           echo "archivos=$FILES" >> $GITHUB_OUTPUT
 
       - name: Validar push
         run: |
-          ADMIN="dfeoli" # reemplazar con el usuario del administrador del repo
+          ADMIN="dfeoli" # usuario administrador del repo
           AUTHOR="${{ github.actor }}"
 
-          # Si es admin, pasa automáticamente
+          # Permitir push directo si es admin
           if [ "$AUTHOR" = "$ADMIN" ]; then
             echo "Usuario admin, push permitido."
             exit 0
@@ -53,7 +57,7 @@ jobs:
 
           # Validar cantidad de archivos modificados
           if [ ${#VALID_FILES[@]} -ne 1 ]; then
-            echo "Error: Solo se permite modificar un archivo."
+            echo "Error: Solo se permite modificar un archivo no ignorado."
             exit 1
           fi
 
