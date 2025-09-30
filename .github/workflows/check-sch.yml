@@ -1,55 +1,67 @@
-name: Validar archivo .sch único (estricto)
+name: Validar push KiCad
 
 on:
   push:
-    branches:
-      - main
-      - develop
 
 jobs:
-  check-single-sch:
+  validar_push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Trae todo el historial para poder comparar commits
+      - name: Configurar Git
+        run: |
+          git fetch --prune --unshallow || true
 
-      - name: Obtener archivos cambiados en el push
+      - name: Obtener lista de commits del push
+        id: commits
+        run: |
+          # Obtener el rango de commits entre el push y el remoto
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            # Primer push del repo
+            echo "commits=$(git rev-list HEAD)" >> $GITHUB_OUTPUT
+          else
+            echo "commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }})" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Obtener lista de archivos modificados
         id: files
         run: |
-          # Caso push inicial en la rama
-          if [ "${GITHUB_EVENT_BEFORE}" = "0000000000000000000000000000000000000000" ]; then
-            CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA)
-          else
-            # Obtener todos los commits del push
-            COMMITS=$(git rev-list $GITHUB_EVENT_BEFORE..$GITHUB_SHA)
-            CHANGED_FILES=""
-            for commit in $COMMITS; do
-              FILES=$(git diff-tree --no-commit-id --name-only -r $commit)
-              CHANGED_FILES="$CHANGED_FILES $FILES"
-            done
-          fi
+          FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "archivos=$FILES" >> $GITHUB_OUTPUT
 
-          # Limpiar duplicados
-          CHANGED_FILES=$(echo $CHANGED_FILES | tr ' ' '\n' | sort -u | tr '\n' ' ')
-          echo "Archivos cambiados: $CHANGED_FILES"
-          echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
-
-      - name: Validar archivo único .sch
+      - name: Validar push
         run: |
-          FILES=($changed)
-          COUNT=${#FILES[@]}
+          ADMIN="dfeoli" # reemplazar con el usuario del administrador del repo
+          AUTHOR="${{ github.actor }}"
 
-          if [ "$COUNT" -ne 1 ]; then
-            echo "❌ Error: Debe subirse exactamente un archivo, se detectaron $COUNT."
+          # Si es admin, pasa automáticamente
+          if [ "$AUTHOR" = "$ADMIN" ]; then
+            echo "Usuario admin, push permitido."
+            exit 0
+          fi
+
+          # Convertir archivos a array
+          FILE_ARRAY=(${{ steps.files.outputs.archivos }})
+
+          # Filtrar archivos ignorados según .gitignore
+          IGNORED=$(git check-ignore "${FILE_ARRAY[@]}" || true)
+          VALID_FILES=()
+          for f in "${FILE_ARRAY[@]}"; do
+            if ! echo "$IGNORED" | grep -qx "$f"; then
+              VALID_FILES+=("$f")
+            fi
+          done
+
+          # Validar cantidad de archivos modificados
+          if [ ${#VALID_FILES[@]} -ne 1 ]; then
+            echo "Error: Solo se permite modificar un archivo."
             exit 1
           fi
 
-          FILE=${FILES[0]}
-          if [[ "$FILE" != *.sch ]]; then
-            echo "❌ Error: El archivo '$FILE' no termina en .sch"
+          # Validar extensión del archivo
+          FILE="${VALID_FILES[0]}"
+          if [[ "$FILE" != *.kicad_sch ]]; then
+            echo "Error: El archivo modificado debe tener extensión .kicad_sch"
             exit 1
           fi
 
-          echo "✅ Validación correcta: un solo archivo .sch"
+          echo "Push válido."
