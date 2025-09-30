@@ -10,25 +10,33 @@ jobs:
   check-single-sch:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Trae todo el historial para poder comparar commits
 
-      - name: Obtener todos los archivos cambiados en el push
+      - name: Obtener archivos cambiados en el push
         id: files
         run: |
-          # Obtener todos los commits del push
-          COMMITS=$(git rev-list ${{ github.event.before }}..${{ github.sha }})
-          CHANGED_FILES=""
-          for commit in $COMMITS; do
-            FILES=$(git diff-tree --no-commit-id --name-only -r $commit)
-            CHANGED_FILES="$CHANGED_FILES $FILES"
-          done
+          # Caso push inicial en la rama
+          if [ "${GITHUB_EVENT_BEFORE}" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA)
+          else
+            # Obtener todos los commits del push
+            COMMITS=$(git rev-list $GITHUB_EVENT_BEFORE..$GITHUB_SHA)
+            CHANGED_FILES=""
+            for commit in $COMMITS; do
+              FILES=$(git diff-tree --no-commit-id --name-only -r $commit)
+              CHANGED_FILES="$CHANGED_FILES $FILES"
+            done
+          fi
+
           # Limpiar duplicados
           CHANGED_FILES=$(echo $CHANGED_FILES | tr ' ' '\n' | sort -u | tr '\n' ' ')
           echo "Archivos cambiados: $CHANGED_FILES"
           echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
 
-      - name: Validar archivos
+      - name: Validar archivo único .sch
         run: |
           FILES=($changed)
           COUNT=${#FILES[@]}
