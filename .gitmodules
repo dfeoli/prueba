@@ -1,0 +1,3 @@
+[submodule "stamm-kicad-libs"]
+	path = stamm-kicad-libs
+	url = https://github.com/stammbio/stamm-kicad-libs.git

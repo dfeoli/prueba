@@ -1,0 +1,11 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Stamm_TMC51X0")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Driver_Motor.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_DRV8908")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/DRV8908-Q1.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_Isolators")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Isolator.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_Passive_Components")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Passive_Components.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_Semiconductors")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Semiconductors.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_Fuses")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Fuses.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_Terminals")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Terminals.kicad_sym")(options "")(descr ""))
+  (lib (name "Stamm_Mechanicals")(type "KiCad")(uri "${KIPRJMOD}/stamm-kicad-libs/Stamm_Mechanicals.kicad_sym")(options "")(descr ""))
+)
