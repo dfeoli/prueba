@@ -250,7 +250,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "hw_kicad_template.kicad_pro",
+    "filename": "HW_HTB_PFU_MAIN.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -410,8 +410,36 @@
   },
   "sheets": [
     [
-      "087260f2-0e90-4590-b138-7e2000c37004",
+      "8502ea7d-f2d8-4443-99aa-8c64d27b64f2",
       "Root"
+    ],
+    [
+      "8af84ec4-f9ff-4e86-b3d8-160fe4617c9c",
+      "Power supply"
+    ],
+    [
+      "46e7ff1c-8125-41e9-88d5-9f4b09199b1f",
+      "Pinch valves drivers"
+    ],
+    [
+      "c5ab3dfd-7c1c-4bb2-a30e-5dec24847bf3",
+      "Sensors interfaces"
+    ],
+    [
+      "3c7df315-6b15-43f5-811f-c3a0fdbab6ca",
+      "Pump and flipper drivers"
+    ],
+    [
+      "2a7ed905-788f-4558-b3a7-994e6d7deed8",
+      "Liquid detectors"
+    ],
+    [
+      "decd9389-3173-448f-a8eb-4b7cdaab223a",
+      "GPIOs expansion"
+    ],
+    [
+      "4cf548f6-fd83-4f52-ad18-724df536649b",
+      "SBC interface"
     ]
   ],
   "text_variables": {}

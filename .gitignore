@@ -1,0 +1,74 @@
+
+# ========================
+# Ignorar archivos temporales / de respaldo / locales de KiCad 9
+# ========================
+
+# Copias de seguridad / archivos de respaldo
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*-backups
+*-save.kicad_pcb
+*-save.pro
+
+# Archivos temporales autosave / respaldo
+*~
+_autosave-*
+# Algunos guardados automáticos con nombre especial
+\#auto_saved_files\#
+
+# Archivos de “prl” (configuración local del proyecto)
+*.kicad_prl
+
+# Cachés internas / información generada
+fp-info-cache
+# -cache.lib o similares
+*-cache*
+*.tmp
+
+# Archivos de netlist / exportación intermedia
+*.net
+*.dsn
+*.ses
+*.rules
+
+# Archivos de BOM / exportaciones de datos
+*.xml
+*.csv
+export-*
+
+# Archivos de log / simulación
+*.log
+*.raw
+
+# Resultados de render / 3D, dependen de si los generás localmente
+3d/Render/*
+
+# Directorios de salida / fabricación / plots / exportaciones
+fabrication/
+plots/
+exports/
+output/
+build/
+
+# Archivos Gerber, drill, pos, etc. (si los generás localmente, no versionarlos)
+*.gbr
+*.gbl
+*.gbs
+*.gtl
+*.gto
+*.gts
+*.drl
+*.pos
+*.zip
+
+# Archivos “lock” / bloqueo (KiCad usa locks internos)
+*.lock
+*.lck
+
+# Otros archivos no relevantes
+*.000
+*.sch-bak
+*.cmp
+

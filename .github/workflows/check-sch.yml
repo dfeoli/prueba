@@ -1,0 +1,47 @@
+name: Validar archivo .sch único (estricto)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  check-single-sch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Obtener todos los archivos cambiados en el push
+        id: files
+        run: |
+          # Obtener todos los commits del push
+          COMMITS=$(git rev-list ${{ github.event.before }}..${{ github.sha }})
+          CHANGED_FILES=""
+          for commit in $COMMITS; do
+            FILES=$(git diff-tree --no-commit-id --name-only -r $commit)
+            CHANGED_FILES="$CHANGED_FILES $FILES"
+          done
+          # Limpiar duplicados
+          CHANGED_FILES=$(echo $CHANGED_FILES | tr ' ' '\n' | sort -u | tr '\n' ' ')
+          echo "Archivos cambiados: $CHANGED_FILES"
+          echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
+
+      - name: Validar archivos
+        run: |
+          FILES=($changed)
+          COUNT=${#FILES[@]}
+
+          if [ "$COUNT" -ne 1 ]; then
+            echo "❌ Error: Debe subirse exactamente un archivo, se detectaron $COUNT."
+            exit 1
+          fi
+
+          FILE=${FILES[0]}
+          if [[ "$FILE" != *.sch ]]; then
+            echo "❌ Error: El archivo '$FILE' no termina en .sch"
+            exit 1
+          fi
+
+          echo "✅ Validación correcta: un solo archivo .sch"
