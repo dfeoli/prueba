@@ -39,7 +39,7 @@ jobs:
 
       - name: Validar push
         run: |
-          ADMIN="dfeolii" # usuario administrador del repo
+          ADMIN="dfeoliiifsf" # usuario administrador del repo
           AUTHOR="${{ github.actor }}"
 
           # Permitir push directo si es admin
