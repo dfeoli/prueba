@@ -22,7 +22,7 @@ jobs:
           ADMINS=("alguien" "otroadmin" "inventado")
 
           echo "Actor que disparó el workflow: $GITHUB_ACTOR, lista de admins es ${ADMINS[@]}"
-          if [[ " ${ADMINS[@]} " =~ " ${GITHUB_ACTOR} " ]]; then
+          if [[ " ${ADMINS[@]} " == " ${GITHUB_ACTOR} " ]]; then
             echo "is_admin=true" >> $GITHUB_ENV
           else
             echo "is_admin=false" >> $GITHUB_ENV
