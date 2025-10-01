@@ -16,33 +16,35 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check if actor is admin
-  	id: check_admin
-  	run: |
-    	  ADMIN_USER="dfeoli"  # pon aquí tu usuario admin real
-    	  echo "Actor que disparó el workflow: $GITHUB_ACTOR"
-    	  if [ "$GITHUB_ACTOR" = "$ADMIN_USER" ]; then
-      	  echo "is_admin=true" >> $GITHUB_ENV
-    	else
-      	  echo "is_admin=false" >> $GITHUB_ENV
-    	fi
+        id: check_admin
+        run: |
+          # 👇 Pon aquí tu usuario administrador real
+          ADMIN_USER="dfeoliiii"
+
+          echo "Actor que disparó el workflow: $GITHUB_ACTOR"
+          if [ "$GITHUB_ACTOR" = "$ADMIN_USER" ]; then
+            echo "is_admin=true" >> $GITHUB_ENV
+          else
+            echo "is_admin=false" >> $GITHUB_ENV
+          fi
 
       - name: Get changed files
         if: env.is_admin == 'false'
         id: changed
         run: |
-          # Obtener todos los archivos modificados en el push (todos los commits)
-          git fetch origin ${{ github.base_ref || github.ref }}
+          # Obtener todos los archivos modificados entre el commit anterior y el actual
           CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          
+
           echo "Archivos modificados (raw):"
           echo "$CHANGED_FILES"
 
-          # Filtrar los archivos ignorados según .gitignore
+          # Filtrar archivos ignorados en .gitignore
           FILTERED=$(echo "$CHANGED_FILES" | grep -v -f <(git check-ignore -v $CHANGED_FILES | awk '{print $3}') || true)
 
           echo "Archivos modificados (filtrados):"
           echo "$FILTERED"
 
+          # Guardar en variable de entorno
           echo "files=$FILTERED" >> $GITHUB_ENV
 
       - name: Validate only one KiCad schematic changed
