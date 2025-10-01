@@ -1,54 +1,72 @@
-name: Validar push KiCad
+name: Validate KiCad Push
 
 on:
   push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
 
 jobs:
-  validar_push:
+  validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout completo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0   # Trae todo el historial de commits, no solo el último
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Obtener lista de commits del push
-        id: commits
+      - name: Get actor (user who triggered workflow)
+        id: actor
+        run: echo "actor=${{ github.actor }}" >> $GITHUB_ENV
+
+      - name: Check if actor is admin
+        id: check_admin
         run: |
-          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
-            # Primer push del repo
-            echo "commits=$(git rev-list HEAD)" >> $GITHUB_OUTPUT
+          # Puedes cambiar esto por el nombre del admin/owner
+          ADMIN_USER="repo-owner-username"
+          if [ "${{ github.actor }}" = "$ADMIN_USER" ]; then
+            echo "is_admin=true" >> $GITHUB_ENV
           else
-            echo "commits=$(git rev-list ${{ github.event.before }}..${{ github.sha }})" >> $GITHUB_OUTPUT
+            echo "is_admin=false" >> $GITHUB_ENV
           fi
 
-      - name: Obtener lista de archivos modificados
-        id: files
+      - name: Get changed files
+        if: env.is_admin == 'false'
+        id: changed
         run: |
-          if git rev-parse ${{ github.event.before }} >/dev/null 2>&1; then
-            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          else
-            FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-          fi
+          # Obtener todos los archivos modificados en el push (todos los commits)
+          git fetch origin ${{ github.base_ref || github.ref }}
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          
+          echo "Archivos modificados (raw):"
+          echo "$CHANGED_FILES"
 
-          {
-            echo 'archivos<<EOF'
-            echo "$FILES"
-            echo 'EOF'
-          } >> $GITHUB_OUTPUT
+          # Filtrar los archivos ignorados según .gitignore
+          FILTERED=$(echo "$CHANGED_FILES" | grep -v -f <(git check-ignore -v $CHANGED_FILES | awk '{print $3}') || true)
 
-      - name: Validar push
+          echo "Archivos modificados (filtrados):"
+          echo "$FILTERED"
+
+          echo "files=$FILTERED" >> $GITHUB_ENV
+
+      - name: Validate only one KiCad schematic changed
+        if: env.is_admin == 'false'
         run: |
-          ADMIN="dfeoliiifsf" # usuario administrador del repo
-          AUTHOR="${{ github.actor }}"
+          # Convertir a array
+          IFS=$'\n' read -rd '' -a FILE_ARRAY <<<"${{ env.files }}"
 
-          # Permitir push directo si es admin
-          if [ "$AUTHOR" = "$ADMIN" ]; then
-            echo "Usuario admin, push permitido."
-            exit 0
+          COUNT=${#FILE_ARRAY[@]}
+          echo "Cantidad de archivos válidos modificados: $COUNT"
+
+          if [ $COUNT -ne 1 ]; then
+            echo "❌ Se modificaron más de un archivo (o ninguno). Solo se permite uno."
+            exit 1
           fi
 
-          # Leer archivos como array (soporta múltiples líneas)
-          mapfile -t FILE_ARRAY <<< "${{ steps.files.outputs.archivos }}"
+          FILE="${FILE_ARRAY[0]}"
+          if [[ ! "$FILE" =~ \.kicad_sch$ ]]; then
+            echo "❌ El archivo modificado no tiene extensión .kicad_sch"
+            exit 1
+          fi
 
-          # Filtrar ar
+          echo "✅ Validación exitosa: se modificó un único archivo .kicad_sch"
