@@ -15,20 +15,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Get actor (user who triggered workflow)
-        id: actor
-        run: echo "actor=${{ github.actor }}" >> $GITHUB_ENV
-
       - name: Check if actor is admin
-        id: check_admin
-        run: |
-          # Puedes cambiar esto por el nombre del admin/owner
-          ADMIN_USER="repo-owner-username"
-          if [ "${{ github.actor }}" == "$ADMIN_USER" ]; then
-            echo "is_admin=true" >> $GITHUB_ENV
-          else
-            echo "is_admin=false" >> $GITHUB_ENV
-          fi
+  	id: check_admin
+  	run: |
+    	  ADMIN_USER="dfeoli"  # pon aquí tu usuario admin real
+    	  echo "Actor que disparó el workflow: $GITHUB_ACTOR"
+    	  if [ "$GITHUB_ACTOR" = "$ADMIN_USER" ]; then
+      	  echo "is_admin=true" >> $GITHUB_ENV
+    	else
+      	  echo "is_admin=false" >> $GITHUB_ENV
+    	fi
 
       - name: Get changed files
         if: env.is_admin == 'false'
