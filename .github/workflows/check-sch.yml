@@ -26,6 +26,7 @@ jobs:
             echo "is_admin=true" >> $GITHUB_ENV
           else
             echo "is_admin=false" >> $GITHUB_ENV
+	  fi
 
       - name: Get changed files
         if: env.is_admin == 'false'
