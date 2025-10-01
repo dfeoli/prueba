@@ -22,7 +22,7 @@ jobs:
           ADMIN_USER="dfeoliiii"
 
           echo "Actor que disparó el workflow: $GITHUB_ACTOR"
-          if [ "$GITHUB_ACTOR" = "$ADMIN_USER" ]; then
+          if [[ "$GITHUB_ACTOR" == "$ADMIN_USER" ]]; then
             echo "is_admin=true" >> $GITHUB_ENV
           else
             echo "is_admin=false" >> $GITHUB_ENV
