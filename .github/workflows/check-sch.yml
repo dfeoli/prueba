@@ -24,7 +24,7 @@ jobs:
         run: |
           # Puedes cambiar esto por el nombre del admin/owner
           ADMIN_USER="repo-owner-username"
-          if [ "${{ github.actor }}" = "$ADMIN_USER" ]; then
+          if [ "${{ github.actor }}" == "$ADMIN_USER" ]; then
             echo "is_admin=true" >> $GITHUB_ENV
           else
             echo "is_admin=false" >> $GITHUB_ENV
