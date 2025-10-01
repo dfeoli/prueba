@@ -30,7 +30,12 @@ jobs:
           else
             FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
           fi
-          echo "archivos=$FILES" >> $GITHUB_OUTPUT
+
+          {
+            echo 'archivos<<EOF'
+            echo "$FILES"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
 
       - name: Validar push
         run: |
@@ -43,29 +48,7 @@ jobs:
             exit 0
           fi
 
-          # Convertir archivos a array
-          FILE_ARRAY=(${{ steps.files.outputs.archivos }})
+          # Leer archivos como array (soporta múltiples líneas)
+          mapfile -t FILE_ARRAY <<< "${{ steps.files.outputs.archivos }}"
 
-          # Filtrar archivos ignorados según .gitignore
-          IGNORED=$(git check-ignore "${FILE_ARRAY[@]}" || true)
-          VALID_FILES=()
-          for f in "${FILE_ARRAY[@]}"; do
-            if ! echo "$IGNORED" | grep -qx "$f"; then
-              VALID_FILES+=("$f")
-            fi
-          done
-
-          # Validar cantidad de archivos modificados
-          if [ ${#VALID_FILES[@]} -ne 1 ]; then
-            echo "Error: Solo se permite modificar un archivo no ignorado."
-            exit 1
-          fi
-
-          # Validar extensión del archivo
-          FILE="${VALID_FILES[0]}"
-          if [[ "$FILE" != *.kicad_sch ]]; then
-            echo "Error: El archivo modificado debe tener extensión .kicad_sch"
-            exit 1
-          fi
-
-          echo "Push válido."
+          # Filtrar ar

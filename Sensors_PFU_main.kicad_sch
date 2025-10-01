@@ -5,4 +5,44 @@
 	(uuid "edac787c-3759-490a-b0c1-b3921b68d461")
 	(paper "A4")
 	(lib_symbols)
+	(wire
+		(pts
+			(xy 50.8 54.61) (xy 161.29 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5a2caae4-384c-4052-8755-233bc8a47902")
+	)
+	(wire
+		(pts
+			(xy 50.8 77.47) (xy 50.8 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6aa797b7-c72e-4cee-9544-81d053401f07")
+	)
+	(wire
+		(pts
+			(xy 102.87 77.47) (xy 50.8 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "741b333f-aff6-4d78-a7ca-fa979a277091")
+	)
+	(wire
+		(pts
+			(xy 161.29 54.61) (xy 161.29 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c198912c-1043-4386-8eb1-ac92af4aafc1")
+	)
 )
