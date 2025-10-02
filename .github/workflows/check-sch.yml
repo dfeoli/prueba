@@ -29,14 +29,7 @@ jobs:
               break
             fi
           done
-
-          if [[ "$IS_ADMIN" == "true" ]]; then
-            echo "is_admin=true" >> $GITHUB_ENV
-            echo "is_admin=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_admin=false" >> $GITHUB_ENV
-            echo "is_admin=false" >> $GITHUB_OUTPUT
-          fi
+          echo "is_admin=$IS_ADMIN" >> $GITHUB_OUTPUT
 
       - name: Get changed files
         if: steps.check_admin.outputs.is_admin == 'false'
