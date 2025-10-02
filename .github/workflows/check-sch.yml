@@ -33,7 +33,6 @@ jobs:
           echo "is_admin=$IS_ADMIN"
 
       - name: Get changed files
-        if: steps.check_admin.outputs.is_admin == 'false'
         id: changed
         run: |
           # Asegurar historial completo
