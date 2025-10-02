@@ -15,4 +15,14 @@
 		)
 		(uuid "fca78b28-38d9-48f0-a60a-ef16070a575a")
 	)
+	(wire
+		(pts
+			(xy 59.69 106.68) (xy 137.16 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ff761a06-ff8d-46e0-b3a8-df4ca1d98202")
+	)
 )
