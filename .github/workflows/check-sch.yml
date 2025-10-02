@@ -54,6 +54,7 @@ jobs:
       - name: Validate only one KiCad schematic changed
         if: steps.check_admin.outputs.is_admin == 'false'
         run: |
+          echo "files='$files'"
           FILE_ARRAY=()
           if [ -n "$files" ]; then
             IFS='|' read -ra FILE_ARRAY <<< "$files"
