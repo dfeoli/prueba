@@ -30,6 +30,7 @@ jobs:
             fi
           done
           echo "is_admin=$IS_ADMIN" >> $GITHUB_OUTPUT
+          echo "is_admin=$IS_ADMIN"
 
       - name: Get changed files
         if: steps.check_admin.outputs.is_admin == 'false'
