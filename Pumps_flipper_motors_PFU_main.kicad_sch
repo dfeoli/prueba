@@ -7,16 +7,6 @@
 	(lib_symbols)
 	(wire
 		(pts
-			(xy 93.98 59.69) (xy 165.1 59.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c8c0b69d-35e0-4972-a83b-910101d74ebe")
-	)
-	(wire
-		(pts
 			(xy 165.1 59.69) (xy 165.1 90.17)
 		)
 		(stroke

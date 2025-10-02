@@ -53,21 +53,16 @@ jobs:
           git check-ignore -v $CHANGED_FILES | awk '{print $3}' > "$TMP_IGNORE"
           FILTERED=$(echo "$CHANGED_FILES" | grep -v -f "$TMP_IGNORE" || true)
           rm -f "$TMP_IGNORE"
-          FILTERED=$(echo "$CHANGED_FILES" | grep -v -f <(git check-ignore -v $CHANGED_FILES | awk '{print $3}') || true)
-
-          echo "Archivos modificados (filtrados):"
-          echo "$FILTERED"
-
-          echo "files=$FILTERED" >> $GITHUB_ENV
+          # Codificar archivos en una sola línea
+          FILES_JOINED=$(echo "$FILTERED" | paste -sd "|" -)
+          echo "files=$FILES_JOINED" >> $GITHUB_ENV
 
       - name: Validate only one KiCad schematic changed
         if: steps.check_admin.outputs.is_admin == 'false'
         run: |
           FILE_ARRAY=()
           if [ -n "$files" ]; then
-            while IFS= read -r line; do
-              FILE_ARRAY+=("$line")
-            done <<< "$files"
+            IFS='|' read -ra FILE_ARRAY <<< "$files"
           fi
 
           FILE_COUNT=${#FILE_ARRAY[@]}
