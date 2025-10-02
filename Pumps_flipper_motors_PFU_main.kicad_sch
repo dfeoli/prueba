@@ -15,24 +15,4 @@
 		)
 		(uuid "6462d277-2491-4f3d-a730-b324290661f7")
 	)
-	(wire
-		(pts
-			(xy 76.2 96.52) (xy 76.2 91.44)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b2703284-e019-4f52-b46e-59ca7b153e7c")
-	)
-	(wire
-		(pts
-			(xy 76.2 91.44) (xy 180.34 91.44)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d96449cc-5c01-49cb-93b9-f8aed8dd78f0")
-	)
 )
