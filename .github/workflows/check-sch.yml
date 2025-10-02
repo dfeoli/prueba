@@ -24,7 +24,6 @@ jobs:
           echo "Actor que disparó el workflow: $GITHUB_ACTOR, lista de admins es ${ADMINS[@]}"
           if [[ " ${ADMINS[@]} " =~ " ${GITHUB_ACTOR} " ]]; then
             echo "is_admin=true" >> $GITHUB_ENV
-            echo "is_admin=true" >> $GITHUB_ENV
             echo "is_admin=true" >> $GITHUB_OUTPUT
           else
             echo "is_admin=false" >> $GITHUB_ENV
@@ -61,19 +60,19 @@ jobs:
           echo "files=$FILTERED" >> $GITHUB_ENV
 
       - name: Validate only one KiCad schematic changed
-        env:
-          files: "${{ env.files }}"
         run: |
           FILE_ARRAY=()
-          if [ -n "${{ env.files }}" ]; then
+          if [ -n "$files" ]; then
             while IFS= read -r line; do
-          if [ $FILE_COUNT -ne 1 ]; then
-            echo "❌ Se modificaron $FILE_COUNT archivos (deben ser exactamente 1). Solo se permite modificar un archivo."
-            exit 1
+              FILE_ARRAY+=("$line")
+            done <<< "$files"
           fi
+
+          FILE_COUNT=${#FILE_ARRAY[@]}
           echo "Cantidad de archivos válidos modificados: $FILE_COUNT"
+
           if [ $FILE_COUNT -ne 1 ]; then
-            echo "❌ Se modificaron más de un archivo (o ninguno). Solo se permite uno."
+            echo "❌ Se modificaron $FILE_COUNT archivos (debe ser exactamente 1). Solo se permite modificar un archivo."
             exit 1
           fi
 
@@ -84,3 +83,5 @@ jobs:
           fi
 
           echo "✅ Validación exitosa: se modificó un único archivo .kicad_sch"
+        env:
+          files: ${{ env.files }}
