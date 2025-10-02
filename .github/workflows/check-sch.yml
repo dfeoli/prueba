@@ -9,7 +9,7 @@ on:
       - "**"
 
 jobs:
-  validate:
+  validate-kicad-sch:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
