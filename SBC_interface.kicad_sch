@@ -5,14 +5,4 @@
 	(uuid "d4778207-3e0e-4ebb-bd2d-2b62add7af5c")
 	(paper "A4")
 	(lib_symbols)
-	(wire
-		(pts
-			(xy 62.23 63.5) (xy 173.99 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fca78b28-38d9-48f0-a60a-ef16070a575a")
-	)
 )
