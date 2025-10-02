@@ -19,7 +19,7 @@ jobs:
         id: check_admin
         run: |
           # 👇 Poner aquí los nombres de usuario de los administradores del repo
-          ADMINS=("maxi" "alan" "username3")
+          ADMINS=("maxi" "alan" "username")
 
           echo "Actor que disparó el workflow: $GITHUB_ACTOR, lista de admins es ${ADMINS[@]}"
           IS_ADMIN=false
