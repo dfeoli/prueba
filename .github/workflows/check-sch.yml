@@ -62,6 +62,7 @@ jobs:
           echo "files=$FILTERED" >> $GITHUB_ENV
 
       - name: Validate only one KiCad schematic changed
+        if: steps.check_admin.outputs.is_admin == 'false'
         run: |
           FILE_ARRAY=()
           if [ -n "$files" ]; then
