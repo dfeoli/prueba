@@ -46,15 +46,17 @@ jobs:
 
           CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA || true)
 
-          echo "Archivos modificados (raw):"
+          echo "Archivos modificados:"
           echo "$CHANGED_FILES"
-          # Filtrar archivos ignorados en .gitignore
-          TMP_IGNORE=$(mktemp)
-          git check-ignore -v $CHANGED_FILES | awk '{print $3}' > "$TMP_IGNORE"
-          FILTERED=$(echo "$CHANGED_FILES" | grep -v -f "$TMP_IGNORE" || true)
-          rm -f "$TMP_IGNORE"
-          # Codificar archivos en una sola línea
-          FILES_JOINED=$(echo "$FILTERED" | paste -sd "|" -)
+
+          # Si no hay archivos modificados, salir temprano
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "files=" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Codificar archivos en una sola línea (delimitador "|")
+          FILES_JOINED=$(echo "$CHANGED_FILES" | paste -sd "|" -)
           echo "files=$FILES_JOINED" >> $GITHUB_ENV
 
       - name: Validate only one KiCad schematic changed
