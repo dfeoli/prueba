@@ -62,10 +62,15 @@ jobs:
 
       - name: Validate only one KiCad schematic changed
         env:
-          files: ${{ env.files }}
+          files: "${{ env.files }}"
         run: |
-          IFS=$'\n' read -rd '' -a FILE_ARRAY <<<"${{ env.files }}"
-          FILE_COUNT=${#FILE_ARRAY[@]}
+          FILE_ARRAY=()
+          if [ -n "${{ env.files }}" ]; then
+            while IFS= read -r line; do
+          if [ $FILE_COUNT -ne 1 ]; then
+            echo "❌ Se modificaron $FILE_COUNT archivos (deben ser exactamente 1). Solo se permite modificar un archivo."
+            exit 1
+          fi
           echo "Cantidad de archivos válidos modificados: $FILE_COUNT"
           if [ $FILE_COUNT -ne 1 ]; then
             echo "❌ Se modificaron más de un archivo (o ninguno). Solo se permite uno."
