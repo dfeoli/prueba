@@ -18,11 +18,19 @@ jobs:
       - name: Check if actor is admin
         id: check_admin
         run: |
-          # 👇 Pon aquí tu usuario administrador real
-          ADMINS=("alguien" "otroadmin" "inventado")
+          # 👇 Poner aquí los nombres de usuario de los administradores del repo
+          ADMINS=("dfeoli" "actualusername2" "actualusername3")
 
           echo "Actor que disparó el workflow: $GITHUB_ACTOR, lista de admins es ${ADMINS[@]}"
-          if [[ " ${ADMINS[@]} " =~ " ${GITHUB_ACTOR} " ]]; then
+          IS_ADMIN=false
+          for admin in "${ADMINS[@]}"; do
+            if [[ "$GITHUB_ACTOR" == "$admin" ]]; then
+              IS_ADMIN=true
+              break
+            fi
+          done
+
+          if [[ "$IS_ADMIN" == "true" ]]; then
             echo "is_admin=true" >> $GITHUB_ENV
             echo "is_admin=true" >> $GITHUB_OUTPUT
           else
@@ -69,7 +77,7 @@ jobs:
           fi
 
           FILE_COUNT=${#FILE_ARRAY[@]}
-          echo "Cantidad de archivos válidos modificados: $FILE_COUNT"
+          echo "Cantidad de archivos modificados: $FILE_COUNT"
 
           if [ $FILE_COUNT -ne 1 ]; then
             echo "❌ Se modificaron $FILE_COUNT archivos (debe ser exactamente 1). Solo se permite modificar un archivo."
