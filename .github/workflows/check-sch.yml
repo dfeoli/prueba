@@ -45,18 +45,10 @@ jobs:
           echo "Comparando $BASE_SHA...$HEAD_SHA"
 
           CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA || true)
-
           echo "Archivos modificados:"
           echo "$CHANGED_FILES"
-
-          # Si no hay archivos modificados, salir temprano
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "files=" >> $GITHUB_ENV
-            exit 0
-          fi
-
-          # Codificar archivos en una sola línea (delimitador "|")
-          FILES_JOINED=$(echo "$CHANGED_FILES" | paste -sd "|" -)
+          FILES_JOINED=$(echo "$CHANGED_FILES" | tr '\n' '|' | sed 's/|$//')
+          echo "Archivos codificados: $FILES_JOINED"
           echo "files=$FILES_JOINED" >> $GITHUB_ENV
 
       - name: Validate only one KiCad schematic changed
